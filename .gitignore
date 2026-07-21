@@ -221,3 +221,8 @@ __marimo__/
 data/
 images/
 results/
+
+# R projects
+.Rhistory
+.Rproj.user/
+*.Rproj

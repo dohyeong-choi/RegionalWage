@@ -1,4 +1,5 @@
-libname lkj 'D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\goms';
+/* 실행 전에 code\00.config.sas 를 먼저 submit 하세요. (PROJ / DATA / RESULTS / KEUS 매크로 변수) */
+libname lkj "&DATA";
 options compress=binary;
 
 data lkj.final;
@@ -126,5 +127,5 @@ ods output close;
 
 ods output ParameterEstimates=mdc_params;
 
-proc export data=lkj.final outfile="D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\goms\pooled.dta" dbms=dta replace;
+proc export data=lkj.final outfile="&DATA\pooled.dta" dbms=dta replace;
 run;

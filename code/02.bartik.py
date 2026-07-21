@@ -14,15 +14,30 @@ except ImportError:
 # 0. 기본 설정
 # ============================================================
 
-try:
-    BASE_DIR = Path(__file__).resolve().parent
-except NameError:
-    BASE_DIR = Path.cwd()
+# 저장소 루트는 links.yaml이 있는 폴더로 식별한다.
+# data / results / images는 setup_env.py가 만든 정션(구글드라이브 연결)이다.
+def find_repo_root(start):
+    for d in [start, *start.parents]:
+        if (d / "links.yaml").exists():
+            return d
+    raise FileNotFoundError(
+        "links.yaml을 찾지 못했습니다. 저장소 안에서 실행하고 "
+        "setup_env.py를 먼저 실행했는지 확인하세요."
+    )
 
-INPUT_FILE = BASE_DIR / "임금&종사자수(연령구분).xlsx"
+
+try:
+    START_DIR = Path(__file__).resolve().parent
+except NameError:
+    START_DIR = Path.cwd().resolve()
+
+REPO_ROOT = find_repo_root(START_DIR)
+DATA_DIR = REPO_ROOT / "data"
+
+INPUT_FILE = DATA_DIR / "임금&종사자수(연령구분).xlsx"
 
 # 기존 파일명 그대로 덮어쓰기
-OUTPUT_FILE = BASE_DIR / "lnwage_external_wage_iv_panel_resid_16sido.xlsx"
+OUTPUT_FILE = DATA_DIR / "lnwage_external_wage_iv_panel_resid_16sido.xlsx"
 
 WAGE_SHEET = "wage"
 EMPLOY_WAGE_WEIGHT_SHEET = "employ"

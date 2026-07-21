@@ -1,4 +1,5 @@
-libname lkj 'D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\goms';
+/* 실행 전에 code\00.config.sas 를 먼저 submit 하세요. (PROJ / DATA / RESULTS / KEUS 매크로 변수) */
+libname lkj "&DATA";
 
 data d15;
 set lkj.GP14_2015;
@@ -186,7 +187,7 @@ run;
    ============================================================ */
 
 proc import out=wage
-datafile='D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\lnwage_external_wage_iv_panel_resid_16sido.xlsx'
+datafile="&DATA\lnwage_external_wage_iv_panel_resid_16sido.xlsx"
 dbms=excel replace;
 sheet='actual_lnwage_panel';
 run;
@@ -257,7 +258,7 @@ run;
    ============================================================ */
 
 proc import out=resid
-datafile='D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\lnwage_external_wage_iv_panel_resid_16sido.xlsx'
+datafile="&DATA\lnwage_external_wage_iv_panel_resid_16sido.xlsx"
 dbms=excel replace;
 sheet='resid_lnwage_panel';
 run;

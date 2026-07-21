@@ -1,3 +1,4 @@
+/* 실행 전에 code\00.config.sas 를 먼저 submit 하세요. (PROJ / DATA / RESULTS / KEUS 매크로 변수) */
 /**********************************************************************
  *   PRODUCT:   SAS
  *   VERSION:   9.1
@@ -19,7 +20,7 @@
  ***********************************************************************/
    data WORK.MDIS;
     %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
-    infile 'D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\지역별 고용조사\2019.csv' delimiter = ',' MISSOVER DSD lrecl=32767 firstobs = 2;
+    infile "&KEUS\2019.csv" delimiter = ',' MISSOVER DSD lrecl=32767 firstobs = 2;
         informat C1 best12. ;
         informat C2 best12. ;
         informat C3 best12. ;

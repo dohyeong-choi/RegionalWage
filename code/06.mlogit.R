@@ -5,24 +5,47 @@ library(logitr)
 # ============================================================
 # 1. Settings
 # ============================================================
-data_path <- paste0(
-  "D:/이경재/학술대회 및 논문공모전/",
-  "2027 Journal of Regional Science/분석/goms/pooled.dta"
-)
+# 저장소 루트는 links.yaml이 있는 폴더로 식별한다.
+# data / results / images는 setup_env.py가 만든 정션(구글드라이브 연결)이다.
+find_repo_root <- function(start = getwd()) {
+  d <- normalizePath(start, winslash = "/", mustWork = FALSE)
+  repeat {
+    if (file.exists(file.path(d, "links.yaml"))) return(d)
+    parent <- dirname(d)
+    if (identical(parent, d)) {
+      stop(
+        "links.yaml을 찾지 못했습니다. 저장소 안에서 실행하거나 ",
+        "repo_root를 직접 지정하세요."
+      )
+    }
+    d <- parent
+  }
+}
 
-out_dir <- paste0(
-  "D:/이경재/학술대회 및 논문공모전/",
-  "2027 Journal of Regional Science/분석/logitr_results"
-)
+# Rscript로 실행하면 --file= 인자에서, RStudio 등에서는 작업 디렉터리에서 출발한다.
+script_arg <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
+
+start_dir <- if (length(script_arg) > 0) {
+  dirname(normalizePath(sub("^--file=", "", script_arg[1]), mustWork = FALSE))
+} else {
+  getwd()
+}
+
+repo_root <- find_repo_root(start_dir)
+
+data_path <- file.path(repo_root, "data", "pooled.dta")   # 05.mlogit.sas 출력
+out_dir   <- file.path(repo_root, "results")
 
 if (!dir.exists(out_dir)) {
   dir.create(out_dir, recursive = TRUE)
 }
 
+cat("Repo root:", repo_root, "\n")
+
 sample_frac     <- 1
 seed            <- 20260717
 num_draws       <- 100
-num_multistarts <- 5
+num_multistarts <- 1
 num_threads     <- max(1, parallel::detectCores() - 1)
 
 # Random coefficients are normally distributed.

@@ -1,3 +1,4 @@
+/* 실행 전에 code\00.config.sas 를 먼저 submit 하세요. (PROJ / DATA / RESULTS / KEUS 매크로 변수) */
 /**********************************************************************
  *   PRODUCT:   SAS
  *   VERSION:   9.1
@@ -9,7 +10,7 @@
 data WORK.MDIS;
     %let _EFIERR_ = 0;
 
-    infile 'D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\지역별 고용조사\2015.csv'
+    infile "&KEUS\2015.csv"
         delimiter = ','
         MISSOVER
         DSD

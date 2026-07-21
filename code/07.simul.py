@@ -17,17 +17,34 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 # ============================================================
 # 0. 경로 & 설정
 # ============================================================
-BASE = Path(r"D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석")
-DATA = BASE / "data" / "pooled.dta"                                              # 실제 경로 확인
-COEF = BASE / "logitr_results" / "pooled_wages_high_college_draws100_starts5_coef.csv"     # 실제 경로 확인
+# 저장소 루트는 links.yaml이 있는 폴더로 식별한다.
+# data / results / images는 setup_env.py가 만든 정션(구글드라이브 연결)이다.
+def find_repo_root(start):
+    for d in [start, *start.parents]:
+        if (d / "links.yaml").exists():
+            return d
+    raise FileNotFoundError(
+        "links.yaml을 찾지 못했습니다. 저장소 안에서 실행하고 "
+        "setup_env.py를 먼저 실행했는지 확인하세요."
+    )
 
-OUT = {
-    1: BASE / "시뮬레이션1",
-    2: BASE / "시뮬레이션2",
-    3: BASE / "시뮬레이션3",
-    4: BASE / "시뮬레이션4",
-}
-for p in OUT.values():
+
+try:
+    START_DIR = Path(__file__).resolve().parent
+except NameError:
+    START_DIR = Path.cwd().resolve()
+
+BASE    = find_repo_root(START_DIR)
+DATA_DIR    = BASE / "data"
+RESULTS_DIR = BASE / "results"
+IMAGES_DIR  = BASE / "images"
+
+DATA = DATA_DIR / "pooled.dta"                                                            # 05.mlogit.sas 출력
+COEF = RESULTS_DIR / "pooled_wages_high_college_draws100_starts5_coef.csv"                # 06.mlogit.R 출력
+
+# 시나리오별 산출물은 파일명에 scn 번호가 들어가므로 별도 폴더 없이
+# 표는 results/, 그림은 images/에 저장한다.
+for p in (RESULTS_DIR, IMAGES_DIR):
     p.mkdir(parents=True, exist_ok=True)
 
 R_DRAWS    = 200          # 개인 공통 계수 draw 수 (이질성 반영)
@@ -170,7 +187,6 @@ YEARS = {2015: False, 2020: True}
 # 5. 실행
 # ============================================================
 for scn, cfg in SCENARIOS.items():
-    outdir = OUT[scn]
     results = {}
     packs = {}
 
@@ -192,7 +208,7 @@ for scn, cfg in SCENARIOS.items():
         'Premium_2015(%)': [round(v,1) if not np.isnan(v) else None for v in results[2015].values()],
         'Premium_2020(%)': [round(v,1) if not np.isnan(v) else None for v in results[2020].values()],
     }).sort_values('Premium_2020(%)', na_position='last').reset_index(drop=True)
-    tbl.to_excel(outdir / f"premium_table_scn{scn}_{cfg['name']}.xlsx", index=False)
+    tbl.to_excel(RESULTS_DIR / f"premium_table_scn{scn}_{cfg['name']}.xlsx", index=False)
 
     # ---- 곡선 그림 (연도별, 최소/최대 프리미엄 지역) ----
     for yr, (pack, is2020) in packs.items():
@@ -222,9 +238,9 @@ for scn, cfg in SCENARIOS.items():
             ax.set_ylabel("Predicted choice probability (%)")
             ax.legend(); ax.set_title(f"Scn{scn} {cfg['name']} {yr}: {sido}")
         plt.tight_layout()
-        fig.savefig(outdir / f"curves_scn{scn}_{cfg['name']}_{yr}.png", dpi=200)
+        fig.savefig(IMAGES_DIR / f"curves_scn{scn}_{cfg['name']}_{yr}.png", dpi=200)
         plt.close(fig)
 
-    print(f"=== Scenario {scn} saved -> {outdir}\n")
+    print(f"=== Scenario {scn} saved -> {RESULTS_DIR} / {IMAGES_DIR}\n")
 
 print("ALL DONE")

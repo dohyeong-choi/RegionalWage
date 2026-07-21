@@ -1,4 +1,5 @@
-libname lkj 'D:\이경재\학술대회 및 논문공모전\2027 Journal of Regional Science\분석\지역별 고용조사';
+/* 실행 전에 code\00.config.sas 를 먼저 submit 하세요. (PROJ / DATA / RESULTS / KEUS 매크로 변수) */
+libname lkj "&KEUS";
 
 data lkj.wage_panel;
 set wage_wide08 wage_wide09 wage_wide10 wage_wide11 wage_wide12 wage_wide13 wage_wide14 wage_wide15 wage_wide16 wage_wide17 wage_wide18 wage_wide19 wage_wide20;
